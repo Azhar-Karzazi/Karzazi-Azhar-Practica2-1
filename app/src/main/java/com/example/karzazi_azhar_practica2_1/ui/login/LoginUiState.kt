@@ -4,7 +4,7 @@ data class LoginUiState(
     val email: String = "",
     val password: String = ""
 ) {
-    // El botón solo se habilita si los dos campos están rellenos
+    // El boton se habilita solo si los dos campos están rellenos
     val botonHabilitado: Boolean
-        get() = email.isNotBlank() && password.isNotBlank()
+            get() = email.isNotBlank() && password.isNotBlank()
 }

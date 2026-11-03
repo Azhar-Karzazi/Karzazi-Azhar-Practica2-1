@@ -43,7 +43,7 @@ data class RegisterUiState(
             "Las contraseñas no coinciden"
         } else null
 
-    // El botón solo se habilita con todo relleno y sin ningún error
+    // El boton solo se habilita con todo relleno y sin ningun error
     val botonHabilitado: Boolean
         get() = nombre.isNotBlank() &&
                 dni.isNotBlank() &&

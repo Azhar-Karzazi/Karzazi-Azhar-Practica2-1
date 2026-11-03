@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.karzazi_azhar_practica2_1.ui.login.LoginScreen
 import com.example.karzazi_azhar_practica2_1.ui.register.RegisterScreen
 import com.example.karzazi_azhar_practica2_1.ui.theme.KarzaziAzharPractica21Theme
 
@@ -21,9 +22,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             KarzaziAzharPractica21Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Para probar el login, cambia RegisterScreen por LoginScreen
-                    // (import com.example.karzazi_azhar_practica2_1.ui.login.LoginScreen)
-                    RegisterScreen(modifier = Modifier.padding(innerPadding))
+                    //RegisterScreen(modifier = Modifier.padding(innerPadding))
+                    LoginScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
