@@ -22,8 +22,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             KarzaziAzharPractica21Theme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    //RegisterScreen(modifier = Modifier.padding(innerPadding))
-                    LoginScreen(modifier = Modifier.padding(innerPadding))
+                    RegisterScreen(modifier = Modifier.padding(innerPadding))
+                    //LoginScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
         }
