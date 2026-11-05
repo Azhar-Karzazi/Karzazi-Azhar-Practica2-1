@@ -2,7 +2,7 @@ package com.example.karzazi_azhar_practica2_1.ui.register
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.karzazi_azhar_practica2_1.data.UsuarioDTO
+import com.example.karzazi_azhar_practica2_1.model.UsuarioDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

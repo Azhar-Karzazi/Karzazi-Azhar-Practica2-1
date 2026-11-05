@@ -2,21 +2,22 @@ package com.example.karzazi_azhar_practica2_1.ui.home
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.karzazi_azhar_practica2_1.data.Bebida
-import com.example.karzazi_azhar_practica2_1.data.LineaPedido
-import com.example.karzazi_azhar_practica2_1.data.Pasta
-import com.example.karzazi_azhar_practica2_1.data.Pizza
-import com.example.karzazi_azhar_practica2_1.data.Producto
 import com.example.karzazi_azhar_practica2_1.data.ProductosMock
-import com.example.karzazi_azhar_practica2_1.data.Tamano
+import com.example.karzazi_azhar_practica2_1.model.LineaPedido
+import com.example.karzazi_azhar_practica2_1.model.Producto
+import com.example.karzazi_azhar_practica2_1.model.Tamano
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class HomeViewModel : ViewModel() {
 
+    // Privado: solo el ViewModel puede cambiar el estado
     private val _uiState = MutableStateFlow(HomeUiState())
-    val uiState: StateFlow<HomeUiState> = _uiState
+
+    // La UI solo puede leerlo
+    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
     // Al crearse el ViewModel (al abrir la ventana) se cargan los productos
     init {
@@ -28,60 +29,51 @@ class HomeViewModel : ViewModel() {
         _uiState.update {
             it.copy(
                 pizzas = ProductosMock.pizzas,
-                bebidas = ProductosMock.bebidas,
-                pastas = ProductosMock.pastas
+                pastas = ProductosMock.pastas,
+                bebidas = ProductosMock.bebidas
             )
         }
     }
 
-    fun onCantidadMas(idProducto: Int) {
-        _uiState.update { estado ->
-            val nueva = estado.cantidadDe(idProducto) + 1
-            estado.copy(cantidades = estado.cantidades + (idProducto to nueva))
+    /** El usuario cambia la cantidad de una fila (con los botones o escribiéndola). */
+    fun onCantidadChange(idProducto: Int, tamano: Tamano?, nuevaCantidad: Int) {
+        val cantidad = nuevaCantidad.coerceIn(0, LineaPedido.CANTIDAD_MAXIMA)
+        _uiState.update {
+            it.copy(cantidades = it.cantidades + (Seleccion(idProducto, tamano) to cantidad))
         }
     }
 
-    fun onCantidadMenos(idProducto: Int) {
-        _uiState.update { estado ->
-            val nueva = estado.cantidadDe(idProducto) - 1
-            // La cantidad mínima es 1
-            if (nueva < 1) {
-                estado
-            } else {
-                estado.copy(cantidades = estado.cantidades + (idProducto to nueva))
-            }
-        }
-    }
-
-    fun onTamanoChange(idProducto: Int, tamano: Tamano) {
-        _uiState.update { estado ->
-            estado.copy(tamanos = estado.tamanos + (idProducto to tamano))
-        }
-    }
-
+    /**
+     * Crea una LineaPedido por cada tamaño con cantidad mayor que 0 y la añade al Pedido.
+     * Así se pueden pedir a la vez, por ejemplo, 2 Margaritas medianas y 1 grande.
+     */
     fun onAnadirClick(producto: Producto) {
         val estado = _uiState.value
-        val tamano = estado.tamanoDe(producto.id)
 
-        // Creamos el producto con el tamaño elegido. La pizza y la bebida
-        // necesitan tamaño; la pasta no.
-        val productoElegido: Producto = when (producto) {
-            is Pizza -> if (tamano == null) return else producto.copy(tamano = tamano)
-            is Bebida -> if (tamano == null) return else producto.copy(tamano = tamano)
-            is Pasta -> producto
+        val lineasNuevas = producto.opcionesTamano
+            .map { tamano -> LineaPedido(producto, tamano, estado.cantidadDe(producto.id, tamano)) }
+            .filter { it.cantidad > 0 }
+
+        if (lineasNuevas.isEmpty()) return
+
+        var pedido = estado.pedido
+        lineasNuevas.forEach { lineaPedido ->
+            pedido = pedido.anadirLinea(lineaPedido)
+            Log.i(TAG, "LineaPedido: $lineaPedido")
         }
+        Log.i(TAG, "Pedido: $pedido")
+        Log.i(TAG, "Total del pedido: ${pedido.totalProductos} productos, ${pedido.precioTotal} €")
 
-        val lineaPedido = LineaPedido(
-            producto = productoElegido,
-            cantidad = estado.cantidadDe(producto.id)
-        )
-        val nuevoPedido = estado.pedido.copy(
-            lineasPedido = estado.pedido.lineasPedido + lineaPedido
-        )
+        // Se guarda el pedido y se vacía la tabla de esa tarjeta
+        _uiState.update {
+            it.copy(
+                pedido = pedido,
+                cantidades = it.cantidades.filterKeys { seleccion -> seleccion.idProducto != producto.id }
+            )
+        }
+    }
 
-        _uiState.update { it.copy(pedido = nuevoPedido) }
-
-        Log.i("HomeViewModel", lineaPedido.toString())
-        Log.i("HomeViewModel", nuevoPedido.toString())
+    private companion object {
+        const val TAG = "HomeViewModel"
     }
 }
