@@ -63,9 +63,9 @@ object ProductosMock {
     )
 
     val bebidas = listOf(
-        Bebida(id = 8, nombre = "Coca-Cola", precio = 2.00, conAlcohol = false),
-        Bebida(id = 9, nombre = "Agua mineral", precio = 1.50, conAlcohol = false),
-        Bebida(id = 10, nombre = "Limonada casera", precio = 2.50, conAlcohol = false),
-        Bebida(id = 11, nombre = "Cerveza", precio = 2.50, conAlcohol = true)
+        Bebida(id = 8, nombre = "Coca-Cola", precio = 2.00),
+        Bebida(id = 9, nombre = "Agua mineral", precio = 1.50),
+        Bebida(id = 10, nombre = "Limonada casera", precio = 2.50),
+        Bebida(id = 11, nombre = "ColaCao", precio = 2.50)
     )
 }

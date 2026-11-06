@@ -124,7 +124,7 @@ private fun CabeceraProducto(producto: Producto) {
     val descripcion = when (producto) {
         is Pizza -> producto.ingredientes.joinToString(" · ") { it.nombre }
         is Pasta -> producto.ingredientes.joinToString(" · ") { it.nombre }
-        is Bebida -> if (producto.conAlcohol) "Con alcohol" else "Sin alcohol"
+        is Bebida -> "Sin alcohol"
     }
     val precioMinimo = producto.opcionesTamano.minOf { producto.precioSegunTamano(it) }
 
